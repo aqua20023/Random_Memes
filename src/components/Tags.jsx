@@ -1,38 +1,16 @@
-import React, { useEffect } from 'react'
+
 import { useState } from 'react'
-import axios from 'axios'
 import Spinner from './Spinner';
+import  useGif  from '../hooks/useGif';
 
-
-// const API_KEY = 'ip7vt7TfQIUeDhLG6zoVYiyTObnxXW1S';
-const API_KEY = import.meta.env.VITE_GIPHY_API_KEY;
- // Replace with your actual Giphy API key
+// this is a custom hook that fetches GIFs from the Giphy API based on a tag.
+// but dosent use {} for importing hooks like other pre defined hooks
 
 const Tags = () => {
-  const [gif, setGif] = useState('');
-  const [loading, setLoading] = useState(false);
   const [tag, setTag] = useState('');
-  
+  const {gif, loading, fetchData} = useGif(tag);
 
 
-  async function fetchData() {
-    setLoading(true);
-    const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=${tag}`;
-    const {data} = await axios.get(url);
-    const imageUrl = data.data.images.downsized_large.url;
-    console.log(imageUrl);
-    setGif(imageUrl);
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    fetchData();
-  },[])
-
-
- function clickHandler(){
-   fetchData();
- }
 
   function changeHandler(event) {
     setTag(event.target.value);
@@ -51,12 +29,11 @@ const Tags = () => {
         <input 
         type="text" 
         name='Tag' 
-        // placeholder='Search'
         value={tag}
         onChange={changeHandler}
         className='w-9/12 mb-[25px] mt-[25px] bg-white rounded-lg text-lg text-center'/>
      
-      <button onClick={clickHandler}
+      <button onClick={() => fetchData(tag)}
       className='w-9/12 mb-[25px] bg-white rounded-lg text-lg '>
         Generate
       </button>
